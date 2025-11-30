@@ -62,6 +62,18 @@ echo "Please enter your email address:"
 read -r OMARCHY_USER_EMAIL
 export OMARCHY_USER_EMAIL
 
+# Pre-configure autologin BEFORE installation
+echo "Pre-configuring autologin..."
+sudo mkdir -p /etc/sddm.conf.d
+sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
+[Autologin]
+User=$OMARCHY_USER_NAME
+Session=hyprland
+EOF
+echo ""
+echo "Autologin is pre-configured for: $OMARCHY_USER_NAME"
+echo ""
+
 # Make adjustments to Omarchy install scripts to support CachyOS
 echo ""
 echo "Making adjustments to Omarchy install scripts to support CachyOS..."
