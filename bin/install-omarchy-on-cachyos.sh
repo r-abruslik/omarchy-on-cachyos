@@ -40,6 +40,12 @@ else
     echo "yay is already installed."
 fi
 
+# Receive the Omarchy signing key
+sudo pacman-key --recv-keys F0134EE680CAC571
+
+# Locally sign and trust the key
+sudo pacman-key --lsign-key F0134EE680CAC571
+
 # Add omarchy repository to pacman.conf
 echo -e "\n[omarchy]\nSigLevel = Optional TrustedOnly\nServer = https://pkgs.omarchy.org/\$arch" | sudo tee -a /etc/pacman.conf > /dev/null
 sudo pacman -Syu
