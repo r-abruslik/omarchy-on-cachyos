@@ -16,11 +16,26 @@ Installs Omarchy on CachyOS Hyprland with pre-patched configs for Hyprland v0.53
 
 ## Installation
 
+### Standard (Recommended)
+
+Full feedback with progress messages and error checking:
+
 ```bash
 git clone https://github.com/r-abruslik/omarchy-on-cachyos.git
-cd omarchy-on-cachyos
-chmod +x install.sh
-./install.sh
+cd omarchy-on-cachyos/bin
+chmod +x install-omarchy-on-cachyos.sh
+./install-omarchy-on-cachyos.sh
+```
+
+### YOLO Mode (Advanced)
+
+Silent installation without error checking:
+
+```bash
+git clone https://github.com/r-abruslik/omarchy-on-cachyos.git
+cd omarchy-on-cachyos/bin
+chmod +x install-omarchy-yolo.sh
+./install-omarchy-yolo.sh
 ```
 
 ## Post-Install: Restore CachyOS Performance Settings (Optional)
