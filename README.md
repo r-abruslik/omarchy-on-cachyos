@@ -22,3 +22,17 @@ cd omarchy-on-cachyos
 chmod +x install.sh
 ./install.sh
 ```
+
+## Post-Install: Restore CachyOS Performance Settings (Optional)
+
+If you want CachyOS's performance optimizations back, add to `~/.config/hypr/looknfeel.conf`:
+
+```bash
+# CachyOS performance tweaks
+misc {
+    vrr = 2  # Variable refresh rate
+}
+
+render {
+    direct_scanout = true  # Direct scanout bypass
+}
