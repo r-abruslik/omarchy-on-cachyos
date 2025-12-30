@@ -1,5 +1,4 @@
-Gave mroboff's script to AI scaffolding stack(gemini3pro,claude,llama70B,etc) to fix and change it to my liking. 
-The script patches Omarchy's Hyprland configs before running Omarchy's installer, so Hyprland boots cleanly on v0.53+ after the first reboot.
+Enhanced version of [mroboff's script](https://github.com/mroboff/omarchy-on-cachyos) with Hyprland v0.53+ fixes applied before installation, ensuring clean boot on first reboot.
 
 # omarchy-on-cachyos
 
@@ -17,7 +16,9 @@ Installs Omarchy on CachyOS Hyprland with pre-patched configs for Hyprland v0.53
 
 ## Installation
 
+```bash
 git clone https://github.com/r-abruslik/omarchy-on-cachyos.git
 cd omarchy-on-cachyos
 chmod +x install.sh
 ./install.sh
+```
