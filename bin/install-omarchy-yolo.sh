@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-command -v git >/dev/null 2>&1 || { echo "git required" >&2; exit 1; }
+sudo -v
 rm -rf ../omarchy 2>/dev/null || true
 git clone https://github.com/basecamp/omarchy ../omarchy >/dev/null 2>&1 && cd ../omarchy
 command -v yay &>/dev/null || { sudo pacman -S --needed --noconfirm git base-devel >/dev/null 2>&1; rm -rf /tmp/yay; git clone https://aur.archlinux.org/yay.git /tmp/yay >/dev/null 2>&1; (cd /tmp/yay && makepkg -si --noconfirm >/dev/null 2>&1); rm -rf /tmp/yay; }
