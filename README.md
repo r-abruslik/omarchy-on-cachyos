@@ -1,8 +1,7 @@
-Enhanced version of [mroboff's script](https://github.com/mroboff/omarchy-on-cachyos) with Hyprland v0.53+ fixes applied before installation, ensuring clean boot on first reboot.
-
+Enhanced version of [mroboff's script](https://github.com/mroboff/omarchy-on-cachyos).
 # omarchy-on-cachyos
 
-Installs Omarchy on CachyOS Hyprland with pre-patched configs for Hyprland v0.53+.
+Installs Omarchy on CachyOS Hyprland.
 
 ## Prerequisites
 
