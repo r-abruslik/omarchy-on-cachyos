@@ -15,8 +15,6 @@ Installs Omarchy on CachyOS Hyprland.
 
 ## Installation
 
-Standard installation - NVIDIA driver configuration disabled (modern GPUs work OOTB on CachyOS). Legacy installation - for users who need explicit NVIDIA driver setup.
-
 ### Standard (Recommended)
 
 Full feedback with progress messages and error checking:
