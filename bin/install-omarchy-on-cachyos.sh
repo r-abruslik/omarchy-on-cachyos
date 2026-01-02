@@ -12,14 +12,9 @@ run() {
   "$@" || die "Command failed: $*"
 }
 
-echo ">> Checking prerequisites..."
-command -v git >/dev/null 2>&1 || die "git is not installed"
-echo "  ✓ git installed"
-
-echo ""
 echo ">> Cloning Omarchy..."
 rm -rf ../omarchy 2>/dev/null || true
-run git clone https://www.github.com/basecamp/omarchy ../omarchy
+run git clone https://github.com/basecamp/omarchy ../omarchy
 cd ../omarchy || die "cannot cd into ../omarchy"
 echo "  ✓ Cloned"
 
@@ -27,7 +22,7 @@ echo ""
 echo ">> Checking yay..."
 if ! command -v yay &> /dev/null; then
   echo "  Installing yay..."
-  run sudo pacman -S --needed --noconfirm git base-devel
+  run sudo pacman -S --needed --noconfirm base-devel
   rm -rf /tmp/yay
   run git clone https://aur.archlinux.org/yay.git /tmp/yay
   (
@@ -120,7 +115,7 @@ elif [ "$SHELL" = "/bin/fish" ] && command -v mise &> /dev/null; then\\
 fi' config/uwsm/env || die "failed to patch config/uwsm/env"
   fi
 fi
-echo "  ✓ Patches applied"
+echo "  ✓ CachyOS patches applied"
 
 echo ""
 echo ">> Copying to ~/.local/share/omarchy..."
