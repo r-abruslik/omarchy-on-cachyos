@@ -67,14 +67,14 @@ echo " ✓ Configured"
 
 echo ""
 echo ">> Applying CachyOS compatibility patches..."
-[[ ! -f "install.sh" ]] && die "install.sh not found"
+[[ ! -f "install.sh" ]] && die "install.sh not found. Make sure you are inside the omarchy folder!"
 
 if [[ -f "bin/omarchy-update-restart" ]]; then
-    sed -i \
-    -e "s/ | sed 's\/-arch\/\\\\.arch\/'//'" \
-    -e "s/'{print \\$2}'/'{print \\$2 \\\"-\\\" \\$1}' | sed 's\/-linux\/\/'/" \
-    -e "/linux-cachyos/ ! s/pacman -Q linux/pacman -Q linux-cachyos/" \
-    bin/omarchy-update-restart || die "failed to patch bin/omarchy-update-restart"
+    sed -i -f - bin/omarchy-update-restart <<'EOF'
+s/ | sed 's\/-arch\/\\.arch\/'//'
+s/'{print $2}'/'{print $2 " - " $1}' | sed 's\/-linux\/\//'/
+/linux-cachyos/ ! s/pacman -Q linux/pacman -Q linux-cachyos/
+EOF
 fi
 
 if [[ -f "install/omarchy-base.packages" ]]; then
