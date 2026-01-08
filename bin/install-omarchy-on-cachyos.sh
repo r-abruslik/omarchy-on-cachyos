@@ -28,6 +28,7 @@ if ! command -v yay &> /dev/null; then
     cd /tmp/yay || die "cannot cd /tmp/yay"
     run makepkg -si --noconfirm
     rm -rf /tmp/yay
+    cd - || die "cannot return to omarchy directory"
 fi
 echo " ✓ yay ready"
 
@@ -69,28 +70,37 @@ echo ""
 echo ">> Applying CachyOS compatibility patches..."
 [[ ! -f "install.sh" ]] && die "install.sh not found. Make sure you are inside the omarchy folder!"
 
+# Patch omarchy-update-restart for CachyOS kernel naming
 if [[ -f "bin/omarchy-update-restart" ]]; then
     sed -i "s# | sed 's/-arch/\\\\.arch/'##" bin/omarchy-update-restart
     sed -i "s#'{print \$2}'#'{print \$2 \" - \" \$1}' | sed 's/-linux//'#" bin/omarchy-update-restart
     sed -i "/linux-cachyos/ ! s/pacman -Q linux/pacman -Q linux-cachyos/" bin/omarchy-update-restart
 fi
 
-
-
+# Remove tldr package (conflicts with CachyOS)
 if [[ -f "install/omarchy-base.packages" ]]; then
     sed -i '/tldr/d' install/omarchy-base.packages || die "failed to remove tldr package"
 fi
 
+# 1. ADD FISH PACKAGE TO INSTALL LIST
+if [[ -f "install/omarchy-base.packages" ]]; then
+    echo "omarchy-fish" >> install/omarchy-base.packages
+    echo " ✓ Added omarchy-fish to package list"
+fi
+
+# Skip preflight pacman checks (CachyOS already configured)
 if [[ -f "install/preflight/all.sh" ]]; then
     sed -i '/run_logged \$OMARCHY_INSTALL\/preflight\/pacman\.sh/d' install/preflight/all.sh || \
     die "failed to patch install/preflight/all.sh"
 fi
 
+# Skip nvidia setup (handle manually if needed)
 if [[ -f "install/config/all.sh" ]]; then
     sed -i '/run_logged \$OMARCHY_INSTALL\/config\/hardware\/nvidia\.sh/d' install/config/all.sh || \
     die "failed to patch install/config/all.sh"
 fi
 
+# Skip plymouth, limine-snapper, alt-bootloaders (CachyOS uses Limine differently)
 if [[ -f "install/login/all.sh" ]]; then
     sed -i \
     -e '/run_logged \$OMARCHY_INSTALL\/login\/plymouth\.sh/d' \
@@ -99,56 +109,34 @@ if [[ -f "install/login/all.sh" ]]; then
     install/login/all.sh || die "failed to patch install/login/all.sh"
 fi
 
+# Skip post-install pacman configuration
 if [[ -f "install/post-install/all.sh" ]]; then
     sed -i '/run_logged \$OMARCHY_INSTALL\/post-install\/pacman\.sh/d' install/post-install/all.sh || \
     die "failed to patch install/post-install/all.sh"
 fi
 
-if [[ -f "config/uwsm/env" ]]; then
-    cp config/uwsm/env config/uwsm/env.bak
-    if grep -q "omarchy-cmd-present mise" config/uwsm/env; then
-        sed -i '/omarchy-cmd-present mise.*activate bash/c\
-if command -v mise > /dev/null 2>&1; then\
-    eval "$(mise activate bash)"\
-fi' config/uwsm/env || die "failed to patch config/uwsm/env"
-    fi
+# 2. INJECT FISH SETUP INTO FINISHED.SH (Executes right before the logo/reboot screen)
+if [[ -f "install/post-install/finished.sh" ]]; then
+    # Insert the setup command at the very top of finished.sh
+    sed -i '1i run_logged omarchy-setup-fish' install/post-install/finished.sh || \
+    die "failed to patch finished.sh"
+    echo " ✓ Injected fish setup into finish sequence"
 fi
+
 echo " ✓ CachyOS patches applied"
 
 echo ""
-echo ">> Copying to ~/.local/share/omarchy..."
-mkdir -p ~/.local/share/omarchy
-cp -r . ~/.local/share/omarchy
-cd ~/.local/share/omarchy || die "cannot cd ~/.local/share/omarchy"
-echo " ✓ Copied"
-
-echo ""
-echo ">> Backing up existing config..."
-if [[ -d ~/.config/hypr ]]; then
-    cp -r ~/.config/hypr ~/.config/hypr.backup.$(date +%s)
-    echo " ✓ Backed up (~/.config/hypr.backup.*)"
-else
-    echo " ⊘ No existing config"
-fi
-
-echo ""
-echo ">> Configuring Fish..."
-if command -v fish &> /dev/null; then
-    fish -c "set -Ux OMARCHY_PATH $HOME/.local/share/omarchy" 2>/dev/null
-    fish -c "fish_add_path $HOME/.local/share/omarchy/bin" 2>/dev/null || true
-    echo " ✓ Fish configured"
-else
-    echo " ⊘ Fish not found"
-fi
-
-echo ""
 echo "======================================================================"
-echo " READY TO INSTALL"
+echo " READY TO INSTALL OMARCHY WITH FISH SHELL"
 echo "======================================================================"
 echo ""
-echo "✓ CachyOS patches applied"
+echo "✓ CachyOS compatibility patches applied"
 echo "✓ SDDM autologin configured"
-echo "✓ Fish configured"
+echo "✓ omarchy-fish added to package list"
+echo "✓ omarchy-setup-fish injected into finish sequence"
+echo ""
+echo "IMPORTANT: Keep bash as your login shell."
+echo "Fish will launch automatically in your terminal."
 echo ""
 echo "Press Enter to launch Omarchy installer..."
 read -r
