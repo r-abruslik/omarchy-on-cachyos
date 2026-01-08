@@ -108,10 +108,8 @@ if [[ -f "config/uwsm/env" ]]; then
     cp config/uwsm/env config/uwsm/env.bak
     if grep -q "omarchy-cmd-present mise" config/uwsm/env; then
         sed -i '/omarchy-cmd-present mise.*activate bash/c\
-if [ "$SHELL" = "/bin/bash" ] && command -v mise &> /dev/null; then\
-eval "$(mise activate bash)"\
-elif [ "$SHELL" = "/bin/fish" ] && command -v mise &> /dev/null; then\
-mise activate fish | source\
+if command -v mise > /dev/null 2>&1; then\
+    eval "$(mise activate bash)"\
 fi' config/uwsm/env || die "failed to patch config/uwsm/env"
     fi
 fi
