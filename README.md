@@ -6,11 +6,10 @@ Installs Omarchy on CachyOS Hyprland.
 ## Prerequisites
 
 - Fresh **CachyOS** install (fully updated)
-- **Limine** bootloader (required by Omarchy)
-- Recommended:
-  - **Btrfs + Snapper** filesystem
-  - **Fish** shell as default
-  - **CachyOS Hyprland** desktop profile (includes SDDM)
+- **Limine** bootloader
+- **Btrfs + Snapper** filesystem
+- **Bash** shell as default
+- **CachyOS Hyprland** desktop profile (includes SDDM)
 - **git** installed
 
 ## Installation
