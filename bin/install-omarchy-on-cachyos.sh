@@ -61,7 +61,7 @@ echo ">> Configuring SDDM autologin..."
 run sudo mkdir -p /etc/sddm.conf.d
 sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
 [Autologin]
-User=$USER
+User=$OMARCHY_USER_NAME
 Session=hyprland
 EOF
 echo " ✓ Configured"
