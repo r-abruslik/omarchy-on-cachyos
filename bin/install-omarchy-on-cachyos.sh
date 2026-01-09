@@ -12,6 +12,17 @@ run() {
     "$@" || die "Command failed: $*"
 }
 
+# Set bash as login shell for current user
+echo ">> Ensuring bash is the login shell..."
+if [ "$SHELL" != "/usr/bin/bash" ]; then
+    echo " → Changing shell to bash for $USER..."
+    chsh -s /usr/bin/bash || die "failed to change shell to bash"
+    echo " ✓ Shell changed (will take effect on next login)"
+else
+    echo " ✓ Already using bash"
+fi
+echo ""
+
 echo ">> Detecting GPU..."
 if lspci | grep -i nvidia > /dev/null 2>&1; then
     NVIDIA_GPU_INFO=$(lspci | grep -i nvidia | head -1)
