@@ -8,32 +8,16 @@ Installs Omarchy on CachyOS Hyprland.
 - Fresh **CachyOS** install (fully updated)
 - **Limine** bootloader
 - **Btrfs + Snapper** filesystem
-- **Bash** shell as default
 - **CachyOS Hyprland** desktop profile (includes SDDM)
 - **git** installed
 
 ## Installation
-
-### Standard (Recommended)
-
-Full feedback with progress messages and error checking:
 
 ```bash
 git clone https://github.com/r-abruslik/omarchy-on-cachyos.git
 cd omarchy-on-cachyos/bin
 chmod +x install-omarchy-on-cachyos.sh
 ./install-omarchy-on-cachyos.sh
-```
-
-### YOLO Mode (Advanced)
-
-Silent installation without error checking:
-
-```bash
-git clone https://github.com/r-abruslik/omarchy-on-cachyos.git
-cd omarchy-on-cachyos/bin
-chmod +x install-omarchy-yolo.sh
-./install-omarchy-yolo.sh
 ```
 
 ## Post-Install: Restore CachyOS Performance Settings (Optional)
