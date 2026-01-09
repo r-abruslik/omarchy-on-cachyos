@@ -134,11 +134,11 @@ echo " ✓ Repository configured"
 
 echo ""
 echo ">> User configuration"
-OMARCHY_USER_NAME="$USER"
-echo "Using current user: $OMARCHY_USER_NAME"
+echo "Username:"
+read -r OMARCHY_USER_NAME
+export OMARCHY_USER_NAME
 echo "Email:"
 read -r OMARCHY_USER_EMAIL
-export OMARCHY_USER_NAME
 export OMARCHY_USER_EMAIL
 
 echo ""
@@ -146,7 +146,7 @@ echo ">> Configuring SDDM autologin..."
 run sudo mkdir -p /etc/sddm.conf.d
 sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
 [Autologin]
-User=$OMARCHY_USER_NAME
+User=$USER
 Session=hyprland
 EOF
 echo " ✓ Configured (autologin for $OMARCHY_USER_NAME)"
