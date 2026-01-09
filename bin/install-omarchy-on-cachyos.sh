@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 set -u
 
@@ -16,8 +17,11 @@ run() {
 echo ">> Ensuring bash is the login shell..."
 if [ "$SHELL" != "/usr/bin/bash" ]; then
     echo " → Changing shell to bash for $USER..."
-    chsh -s /usr/bin/bash || die "failed to change shell to bash"
-    echo " ✓ Shell changed (will take effect on next login)"
+    if chsh -s /usr/bin/bash; then
+        echo " ✓ Shell changed (will take effect on next login)"
+    else
+        echo " ℹ Shell was already bash or change failed"
+    fi
 else
     echo " ✓ Already using bash"
 fi
@@ -43,25 +47,25 @@ if lspci | grep -i nvidia > /dev/null 2>&1; then
             echo ">> Switching to NVIDIA proprietary drivers..."
             
             # 1. Remove kernel-specific modules FIRST
-echo " → Removing kernel-specific nvidia-open modules..."
-for kernel in $(pacman -Qqs linux-cachyos | grep -v headers | grep -v zfs | grep -v dbg); do
-    sudo pacman -Rns --noconfirm "${kernel}-nvidia-open" 2>/dev/null || true
-done
-
-# 2. THEN remove the utility packages
-echo " → Removing nvidia-open-dkms packages..."
-sudo pacman -Rns --noconfirm \
-    nvidia-utils \
-    egl-wayland \
-    nvidia-settings \
-    opencl-nvidia \
-    lib32-opencl-nvidia \
-    lib32-nvidia-utils \
-    libva-nvidia-driver \
-    2>/dev/null || true
-
-# 3. Install proprietary drivers
-echo " → Installing nvidia-580xx proprietary packages..."
+            echo " → Removing kernel-specific nvidia-open modules..."
+            for kernel in $(pacman -Qqs linux-cachyos | grep -v headers | grep -v zfs | grep -v dbg); do
+                sudo pacman -Rns --noconfirm "${kernel}-nvidia-open" 2>/dev/null || true
+            done
+            
+            # 2. THEN remove the utility packages
+            echo " → Removing nvidia-open-dkms packages..."
+            sudo pacman -Rns --noconfirm \
+                nvidia-utils \
+                egl-wayland \
+                nvidia-settings \
+                opencl-nvidia \
+                lib32-opencl-nvidia \
+                lib32-nvidia-utils \
+                libva-nvidia-driver \
+                2>/dev/null || true
+            
+            # 3. Install proprietary drivers
+            echo " → Installing nvidia-580xx proprietary packages..."
             run sudo pacman -S --needed --noconfirm \
                 nvidia-580xx-dkms \
                 nvidia-580xx-utils \
@@ -158,7 +162,7 @@ echo ">> Configuring SDDM autologin..."
 run sudo mkdir -p /etc/sddm.conf.d
 sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
 [Autologin]
-User=$USER
+User=$OMARCHY_USER_NAME
 Session=hyprland
 EOF
 echo " ✓ Configured (autologin for $OMARCHY_USER_NAME)"
