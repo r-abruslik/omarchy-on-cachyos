@@ -149,8 +149,7 @@ echo " ✓ Repository configured"
 
 echo ""
 echo ">> User configuration"
-echo ""
-echo "Please enter your username:"
+echo "Username:"
 read -r OMARCHY_USER_NAME
 export OMARCHY_USER_NAME
 echo "Email:"
@@ -165,7 +164,7 @@ sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
 User=$OMARCHY_USER_NAME
 Session=hyprland
 EOF
-echo " ✓ Configured (autologin for $OMARCHY_USER_NAME)"
+echo " ✓ Configured"
 
 echo ""
 echo ">> Applying CachyOS compatibility patches..."
@@ -173,14 +172,8 @@ echo ">> Applying CachyOS compatibility patches..."
 
 # Patch omarchy-update-restart for CachyOS kernel naming
 if [[ -f "bin/omarchy-update-restart" ]]; then
-    # 1. Remove the old arch replacement
     sed -i "s# | sed 's/-arch/\\\\.arch/'##" bin/omarchy-update-restart
-    
-    # 2. Add the version number and remove -linux suffix
-    # We use single quotes for the outer sed to avoid variable expansion hell
-    sed -i 's#'"'"'{print $2}'"'"'#'"'"'{print $2 " - " $1}'"'"' | sed '"'"'s/-linux//'"'"'#' bin/omarchy-update-restart
-    
-    # 3. Use linux-cachyos package name
+    sed -i "s#'{print $2}'#'{print $2 " - " $1}' | sed 's/-linux//'#" bin/omarchy-update-restart
     sed -i "/linux-cachyos/ ! s/pacman -Q linux/pacman -Q linux-cachyos/" bin/omarchy-update-restart
 fi
 
@@ -197,28 +190,28 @@ fi
 
 # Skip preflight pacman checks (CachyOS already configured)
 if [[ -f "install/preflight/all.sh" ]]; then
-    sed -i '#run_logged $OMARCHY_INSTALL/preflight/pacman.sh#d' install/preflight/all.sh || \
+    sed -i '/run_logged $OMARCHY_INSTALL/preflight/pacman.sh/d' install/preflight/all.sh || \
     die "failed to patch install/preflight/all.sh"
 fi
 
-# Skip nvidia setup (we handled it already)
+# Skip nvidia setup (handle manually if needed)
 if [[ -f "install/config/all.sh" ]]; then
-    sed -i '#run_logged $OMARCHY_INSTALL/config/hardware/nvidia.sh#d' install/config/all.sh || \
+    sed -i '/run_logged $OMARCHY_INSTALL/config/hardware/nvidia.sh/d' install/config/all.sh || \
     die "failed to patch install/config/all.sh"
 fi
 
 # Skip plymouth, limine-snapper, alt-bootloaders (CachyOS uses Limine differently)
 if [[ -f "install/login/all.sh" ]]; then
     sed -i \
-    -e '#run_logged $OMARCHY_INSTALL/login/plymouth.sh#d' \
-    -e '#run_logged $OMARCHY_INSTALL/login/limine-snapper.sh#d' \
-    -e '#run_logged $OMARCHY_INSTALL/login/alt-bootloaders.sh#d' \
+    -e '/run_logged $OMARCHY_INSTALL/login/plymouth.sh/d' \
+    -e '/run_logged $OMARCHY_INSTALL/login/limine-snapper.sh/d' \
+    -e '/run_logged $OMARCHY_INSTALL/login/alt-bootloaders.sh/d' \
     install/login/all.sh || die "failed to patch install/login/all.sh"
 fi
 
 # Skip post-install pacman configuration
 if [[ -f "install/post-install/all.sh" ]]; then
-    sed -i '#run_logged $OMARCHY_INSTALL/post-install/pacman.sh#d' install/post-install/all.sh || \
+    sed -i '/run_logged $OMARCHY_INSTALL/post-install/pacman.sh/d' install/post-install/all.sh || \
     die "failed to patch install/post-install/all.sh"
 fi
 
@@ -237,8 +230,7 @@ rm -rf ~/.local/share/omarchy
 mkdir -p ~/.local/share/omarchy
 cp -r . ~/.local/share/omarchy || die "failed to copy omarchy files"
 cd ~/.local/share/omarchy || die "cannot cd to ~/.local/share/omarchy"
-echo " ✓ Copied (with git repository preserved)"
-
+echo " ✓ Copied"
 echo ""
 echo "======================================================================"
 echo " READY TO INSTALL OMARCHY WITH FISH SHELL"
