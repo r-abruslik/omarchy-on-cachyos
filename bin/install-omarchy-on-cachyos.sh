@@ -235,8 +235,7 @@ echo ""
 echo ">> Copying patched Omarchy to ~/.local/share/omarchy..."
 rm -rf ~/.local/share/omarchy
 mkdir -p ~/.local/share/omarchy
-# Use cp -a to preserve .git folder for future updates
-cp -a . ~/.local/share/omarchy || die "failed to copy omarchy files"
+cp -r . ~/.local/share/omarchy || die "failed to copy omarchy files"
 cd ~/.local/share/omarchy || die "cannot cd to ~/.local/share/omarchy"
 echo " ✓ Copied (with git repository preserved)"
 
