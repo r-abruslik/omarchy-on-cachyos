@@ -161,7 +161,7 @@ echo ">> Configuring SDDM autologin..."
 run sudo mkdir -p /etc/sddm.conf.d
 sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
 [Autologin]
-User=$OMARCHY_USER_NAME
+User=$USER
 Session=hyprland
 EOF
 echo " ✓ Configured"
@@ -228,7 +228,7 @@ echo ""
 echo ">> Copying patched Omarchy to ~/.local/share/omarchy..."
 rm -rf ~/.local/share/omarchy
 mkdir -p ~/.local/share/omarchy
-cp -r . ~/.local/share/omarchy || die "failed to copy omarchy files"
+cp -a . ~/.local/share/omarchy || die "failed to copy omarchy files"
 cd ~/.local/share/omarchy || die "cannot cd to ~/.local/share/omarchy"
 echo " ✓ Copied"
 echo ""
