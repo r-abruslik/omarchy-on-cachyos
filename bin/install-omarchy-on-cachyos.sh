@@ -42,26 +42,26 @@ if lspci | grep -i nvidia > /dev/null 2>&1; then
             echo ""
             echo ">> Switching to NVIDIA proprietary drivers..."
             
-            # Remove open-source drivers (matching nvidia-open-dkms profile packages)
-            echo " → Removing nvidia-open-dkms packages..."
-            sudo pacman -Rns --noconfirm \
-                nvidia-utils \
-                egl-wayland \
-                nvidia-settings \
-                opencl-nvidia \
-                lib32-opencl-nvidia \
-                lib32-nvidia-utils \
-                libva-nvidia-driver \
-                2>/dev/null || true
-            
-            # Remove any kernel-specific nvidia-open modules
-            # Filters out headers, zfs, and dbg packages to target only the modules
-            for kernel in $(pacman -Qqs linux-cachyos | grep -v headers | grep -v zfs | grep -v dbg); do
-                sudo pacman -Rns --noconfirm "${kernel}-nvidia-open" 2>/dev/null || true
-            done
-            
-            # Install proprietary drivers (Exact match to your provided command)
-            echo " → Installing nvidia-580xx proprietary packages..."
+            # 1. Remove kernel-specific modules FIRST
+echo " → Removing kernel-specific nvidia-open modules..."
+for kernel in $(pacman -Qqs linux-cachyos | grep -v headers | grep -v zfs | grep -v dbg); do
+    sudo pacman -Rns --noconfirm "${kernel}-nvidia-open" 2>/dev/null || true
+done
+
+# 2. THEN remove the utility packages
+echo " → Removing nvidia-open-dkms packages..."
+sudo pacman -Rns --noconfirm \
+    nvidia-utils \
+    egl-wayland \
+    nvidia-settings \
+    opencl-nvidia \
+    lib32-opencl-nvidia \
+    lib32-nvidia-utils \
+    libva-nvidia-driver \
+    2>/dev/null || true
+
+# 3. Install proprietary drivers
+echo " → Installing nvidia-580xx proprietary packages..."
             run sudo pacman -S --needed --noconfirm \
                 nvidia-580xx-dkms \
                 nvidia-580xx-utils \
