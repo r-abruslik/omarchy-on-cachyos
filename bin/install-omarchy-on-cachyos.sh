@@ -173,9 +173,14 @@ echo ">> Applying CachyOS compatibility patches..."
 
 # Patch omarchy-update-restart for CachyOS kernel naming
 if [[ -f "bin/omarchy-update-restart" ]]; then
+    # 1. Remove the old arch replacement
     sed -i "s# | sed 's/-arch/\\\\.arch/'##" bin/omarchy-update-restart
-    sed -i "s/{print \$2}/{print \$2 " - " \$1}/" bin/omarchy-update-restart
-    sed -i "s/}/} | sed 's/-linux//'/" bin/omarchy-update-restart
+    
+    # 2. Add the version number and remove -linux suffix
+    # We use single quotes for the outer sed to avoid variable expansion hell
+    sed -i 's#'"'"'{print $2}'"'"'#'"'"'{print $2 " - " $1}'"'"' | sed '"'"'s/-linux//'"'"'#' bin/omarchy-update-restart
+    
+    # 3. Use linux-cachyos package name
     sed -i "/linux-cachyos/ ! s/pacman -Q linux/pacman -Q linux-cachyos/" bin/omarchy-update-restart
 fi
 
