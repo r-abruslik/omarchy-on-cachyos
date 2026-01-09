@@ -170,12 +170,10 @@ echo ""
 echo ">> Applying CachyOS compatibility patches..."
 [[ ! -f "install.sh" ]] && die "install.sh not found. Make sure you are inside the omarchy folder!"
 
-# Patch omarchy-update-restart for CachyOS kernel naming
-if [[ -f "bin/omarchy-update-restart" ]]; then
-    sed -i "s# | sed 's/-arch/\\\\.arch/'##" bin/omarchy-update-restart
-    sed -i "s#'{print $2}'#'{print $2 " - " $1}' | sed 's/-linux//'#" bin/omarchy-update-restart
-    sed -i "/linux-cachyos/ ! s/pacman -Q linux/pacman -Q linux-cachyos/" bin/omarchy-update-restart
-fi
+# Update restart-needed for kernel updates to use cachyos instead of arch
+sed -i "s/ | sed 's\/-arch\/\\\.arch\/'//" bin/omarchy-update-restart
+sed -i "s/'{print \$2}'/'{print \$2 \"-\" \$1}' | sed 's\/-linux\/\/'/" bin/omarchy-update-restart
+sed -i '/linux-cachyos/ ! s/pacman -Q linux/pacman -Q linux-cachyos/' bin/omarchy-update-restart
 
 # Remove tldr package (conflicts with CachyOS)
 if [[ -f "install/omarchy-base.packages" ]]; then
