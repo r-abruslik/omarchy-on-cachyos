@@ -134,7 +134,8 @@ echo " ✓ Repository configured"
 
 echo ""
 echo ">> User configuration"
-echo "Username:"
+echo ""
+echo "Please enter your username:"
 read -r OMARCHY_USER_NAME
 export OMARCHY_USER_NAME
 echo "Email:"
