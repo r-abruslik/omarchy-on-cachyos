@@ -23,7 +23,6 @@ if lspci | grep -i nvidia > /dev/null 2>&1; then
         echo "CachyOS is currently using NVIDIA open-source drivers (or generic utils)."
         echo ""
         echo "Do you want to switch to NVIDIA proprietary drivers (580.x series)?"
-        echo "Recommended for RTX 50-series GPUs."
         echo ""
         echo -n "Switch to proprietary drivers? (y/N): "
         read -r SWITCH_TO_PROPRIETARY
