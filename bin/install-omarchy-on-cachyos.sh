@@ -197,28 +197,28 @@ fi
 
 # Skip preflight pacman checks (CachyOS already configured)
 if [[ -f "install/preflight/all.sh" ]]; then
-    sed -i '/run_logged $OMARCHY_INSTALL/preflight/pacman.sh/d' install/preflight/all.sh || \
+    sed -i '#run_logged $OMARCHY_INSTALL/preflight/pacman.sh#d' install/preflight/all.sh || \
     die "failed to patch install/preflight/all.sh"
 fi
 
 # Skip nvidia setup (we handled it already)
 if [[ -f "install/config/all.sh" ]]; then
-    sed -i '/run_logged $OMARCHY_INSTALL/config/hardware/nvidia.sh/d' install/config/all.sh || \
+    sed -i '#run_logged $OMARCHY_INSTALL/config/hardware/nvidia.sh#d' install/config/all.sh || \
     die "failed to patch install/config/all.sh"
 fi
 
 # Skip plymouth, limine-snapper, alt-bootloaders (CachyOS uses Limine differently)
 if [[ -f "install/login/all.sh" ]]; then
     sed -i \
-    -e '/run_logged $OMARCHY_INSTALL/login/plymouth.sh/d' \
-    -e '/run_logged $OMARCHY_INSTALL/login/limine-snapper.sh/d' \
-    -e '/run_logged $OMARCHY_INSTALL/login/alt-bootloaders.sh/d' \
+    -e '#run_logged $OMARCHY_INSTALL/login/plymouth.sh#d' \
+    -e '#run_logged $OMARCHY_INSTALL/login/limine-snapper.sh#d' \
+    -e '#run_logged $OMARCHY_INSTALL/login/alt-bootloaders.sh#d' \
     install/login/all.sh || die "failed to patch install/login/all.sh"
 fi
 
 # Skip post-install pacman configuration
 if [[ -f "install/post-install/all.sh" ]]; then
-    sed -i '/run_logged $OMARCHY_INSTALL/post-install/pacman.sh/d' install/post-install/all.sh || \
+    sed -i '#run_logged $OMARCHY_INSTALL/post-install/pacman.sh#d' install/post-install/all.sh || \
     die "failed to patch install/post-install/all.sh"
 fi
 
