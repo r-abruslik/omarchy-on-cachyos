@@ -133,7 +133,7 @@ echo ">> Setting up Omarchy repository..."
 run sudo pacman-key --recv-keys F0134EE680CAC571
 run sudo pacman-key --lsign-key F0134EE680CAC571
 
-if ! grep -q "[omarchy]" /etc/pacman.conf; then
+if ! grep -q '\[omarchy\]' /etc/pacman.conf; then
     printf '
 [omarchy]
 SigLevel = Optional TrustedOnly
