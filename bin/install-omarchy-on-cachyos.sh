@@ -28,7 +28,7 @@ if ! command -v yay &> /dev/null; then
     cd /tmp/yay || die "cannot cd /tmp/yay"
     run makepkg -si --noconfirm
     rm -rf /tmp/yay
-    cd ../omarchy || die "cannot return to omarchy directory"
+    cd - || die "cannot return to omarchy directory"
 fi
 echo " ✓ yay ready"
 
@@ -53,11 +53,11 @@ echo " ✓ Repository configured"
 
 echo ""
 echo ">> User configuration"
-echo "Username:"
-read -r OMARCHY_USER_NAME
-export OMARCHY_USER_NAME
+OMARCHY_USER_NAME="$USER"
+echo "Using current user: $OMARCHY_USER_NAME"
 echo "Email:"
 read -r OMARCHY_USER_EMAIL
+export OMARCHY_USER_NAME
 export OMARCHY_USER_EMAIL
 
 echo ""
@@ -68,7 +68,7 @@ sudo tee /etc/sddm.conf.d/autologin.conf > /dev/null <<EOF
 User=$OMARCHY_USER_NAME
 Session=hyprland
 EOF
-echo " ✓ Configured"
+echo " ✓ Configured (autologin for $OMARCHY_USER_NAME)"
 
 echo ""
 echo ">> Applying CachyOS compatibility patches..."
@@ -132,9 +132,9 @@ echo ""
 echo ">> Copying patched Omarchy to ~/.local/share/omarchy..."
 rm -rf ~/.local/share/omarchy
 mkdir -p ~/.local/share/omarchy
-cp -r . ~/.local/share/omarchy || die "failed to copy omarchy files"
+cp -a . ~/.local/share/omarchy || die "failed to copy omarchy files"
 cd ~/.local/share/omarchy || die "cannot cd to ~/.local/share/omarchy"
-echo " ✓ Copied"
+echo " ✓ Copied (with git repository preserved)"
 
 echo ""
 echo "======================================================================"
@@ -142,9 +142,10 @@ echo " READY TO INSTALL OMARCHY WITH FISH SHELL"
 echo "======================================================================"
 echo ""
 echo "✓ CachyOS compatibility patches applied"
-echo "✓ SDDM autologin configured"
+echo "✓ SDDM autologin configured for $OMARCHY_USER_NAME"
 echo "✓ omarchy-fish added to package list"
 echo "✓ omarchy-setup-fish injected into finish sequence"
+echo "✓ Git repository preserved for future updates"
 echo ""
 echo "IMPORTANT: Keep bash as your login shell."
 echo "Fish will launch automatically in your terminal."
