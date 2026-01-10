@@ -130,7 +130,7 @@ echo " ✓ yay ready"
 
 echo ""
 echo ">> Setting up Omarchy repository..."
-run sudo pacman-key --recv-keys F0134EE680CAC571
+run sudo pacman-key --keyserver hkp://keyserver.ubuntu.com --recv-keys F0134EE680CAC571
 run sudo pacman-key --lsign-key F0134EE680CAC571
 
 if ! grep -q '\[omarchy\]' /etc/pacman.conf; then
@@ -140,6 +140,13 @@ SigLevel = Optional TrustedOnly
 Server = https://pkgs.omarchy.org/$arch
 ' | \
     sudo tee -a /etc/pacman.conf >/dev/null || die "failed to update /etc/pacman.conf"
+fi
+
+echo " -> Installing omarchy-keyring..."
+if ! sudo pacman -Sy --noconfirm --needed omarchy-keyring; then
+     echo " ⚠ Failed to install omarchy-keyring; key updates won't be automatic." >&2
+else
+     echo " ✓ Omarchy keyring installed"
 fi
 
 if ! sudo pacman -Syu --noconfirm; then
