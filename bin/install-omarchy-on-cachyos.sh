@@ -237,9 +237,11 @@ if [[ -f "config/uwsm/env" ]]; then
 fi
 
 if [[ -f "install/post-install/finished.sh" ]]; then
-    sed -i '1i run_logged omarchy-setup-fish' install/post-install/finished.sh || \
-    die "failed to patch finished.sh"
-    echo " ✓ Injected fish setup into finish sequence"
+    if ! grep -q "omarchy-setup-fish" install/post-install/finished.sh; then
+        sed -i '1i run_logged omarchy-setup-fish' install/post-install/finished.sh || \
+        die "failed to patch finished.sh"
+        echo " ✓ Injected fish setup into finish sequence"
+    fi
 fi
 
 echo " ✓ CachyOS patches applied"
