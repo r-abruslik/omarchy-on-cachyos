@@ -193,53 +193,31 @@ echo ""
 echo ">> Applying CachyOS compatibility patches..."
 [[ ! -f "install.sh" ]] && die "install.sh not found. Make sure you are inside the omarchy folder!"
 
-# Update restart-needed for kernel updates to use cachyos instead of arch
-sed -i "s/ | sed 's\/-arch\/\\\.arch\/'//" bin/omarchy-update-restart
-sed -i "s/'{print \$2}'/'{print \$2 \"-\" \$1}' | sed 's\/-linux\/\/'/" bin/omarchy-update-restart
-sed -i '/linux-cachyos/ ! s/pacman -Q linux/pacman -Q linux-cachyos/' bin/omarchy-update-restart
-
-# Remove tldr package (conflicts with CachyOS)
-if [[ -f "install/omarchy-base.packages" ]]; then
-    sed -i '/tldr/d' install/omarchy-base.packages || die "failed to remove tldr package"
-fi
-
-# ADD FISH PACKAGE TO INSTALL LIST
-if [[ -f "install/omarchy-base.packages" ]]; then
-    echo "omarchy-fish" >> install/omarchy-base.packages
-    echo " ✓ Added omarchy-fish to package list"
-fi
-
-# Patch omarchy-update-restart for CachyOS kernel naming
 if [[ -f "bin/omarchy-update-restart" ]]; then
     sed -i "s# | sed 's/-arch/\\\\.arch/'##" bin/omarchy-update-restart
     sed -i "s#'{print \$2}'#'{print \$2 \" - \" \$1}' | sed 's/-linux//'#" bin/omarchy-update-restart
     sed -i "/linux-cachyos/ ! s/pacman -Q linux/pacman -Q linux-cachyos/" bin/omarchy-update-restart
 fi
 
-# Remove tldr package (conflicts with CachyOS)
 if [[ -f "install/omarchy-base.packages" ]]; then
     sed -i '/tldr/d' install/omarchy-base.packages || die "failed to remove tldr package"
 fi
 
-# ADD FISH PACKAGE TO INSTALL LIST
 if [[ -f "install/omarchy-base.packages" ]]; then
     echo "omarchy-fish" >> install/omarchy-base.packages
     echo " ✓ Added omarchy-fish to package list"
 fi
 
-# Skip preflight pacman checks (CachyOS already configured)
 if [[ -f "install/preflight/all.sh" ]]; then
     sed -i '/run_logged \$OMARCHY_INSTALL\/preflight\/pacman\.sh/d' install/preflight/all.sh || \
     die "failed to patch install/preflight/all.sh"
 fi
 
-# Skip nvidia setup (handle manually if needed)
 if [[ -f "install/config/all.sh" ]]; then
     sed -i '/run_logged \$OMARCHY_INSTALL\/config\/hardware\/nvidia\.sh/d' install/config/all.sh || \
     die "failed to patch install/config/all.sh"
 fi
 
-# Skip plymouth, limine-snapper, alt-bootloaders (CachyOS uses Limine differently)
 if [[ -f "install/login/all.sh" ]]; then
     sed -i \
     -e '/run_logged \$OMARCHY_INSTALL\/login\/plymouth\.sh/d' \
@@ -248,13 +226,16 @@ if [[ -f "install/login/all.sh" ]]; then
     install/login/all.sh || die "failed to patch install/login/all.sh"
 fi
 
-# Skip post-install pacman configuration
 if [[ -f "install/post-install/all.sh" ]]; then
     sed -i '/run_logged \$OMARCHY_INSTALL\/post-install\/pacman\.sh/d' install/post-install/all.sh || \
     die "failed to patch install/post-install/all.sh"
 fi
 
-# INJECT FISH SETUP INTO FINISHED.SH
+if [[ -f "config/uwsm/env" ]]; then
+    sed -i 's/omarchy-cmd-present mise && eval "\$(mise activate bash)"/if [ "\$SHELL" = "\/bin\/bash" ] \&\& command -v mise \&> \/dev\/null; then\n eval "\$(mise activate bash)"\nelif [ "\$SHELL" = "\/bin\/fish" ] \&\& command -v mise \&> \/dev\/null; then\n mise activate fish | source\nfi/' config/uwsm/env
+    echo " ✓ Patched mise activation for fish/bash"
+fi
+
 if [[ -f "install/post-install/finished.sh" ]]; then
     sed -i '1i run_logged omarchy-setup-fish' install/post-install/finished.sh || \
     die "failed to patch finished.sh"
