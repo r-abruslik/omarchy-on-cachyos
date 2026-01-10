@@ -203,11 +203,6 @@ if [[ -f "install/omarchy-base.packages" ]]; then
     sed -i '/tldr/d' install/omarchy-base.packages || die "failed to remove tldr package"
 fi
 
-if [[ -f "install/omarchy-base.packages" ]]; then
-    echo "omarchy-fish" >> install/omarchy-base.packages
-    echo " ✓ Added omarchy-fish to package list"
-fi
-
 if [[ -f "install/preflight/all.sh" ]]; then
     sed -i '/run_logged \$OMARCHY_INSTALL\/preflight\/pacman\.sh/d' install/preflight/all.sh || \
     die "failed to patch install/preflight/all.sh"
@@ -234,14 +229,6 @@ fi
 if [[ -f "config/uwsm/env" ]]; then
     sed -i 's/omarchy-cmd-present mise && eval "\$(mise activate bash)"/if [ "\$SHELL" = "\/bin\/bash" ] \&\& command -v mise \&> \/dev\/null; then\n eval "\$(mise activate bash)"\nelif [ "\$SHELL" = "\/bin\/fish" ] \&\& command -v mise \&> \/dev\/null; then\n mise activate fish | source\nfi/' config/uwsm/env
     echo " ✓ Patched mise activation for fish/bash"
-fi
-
-if [[ -f "install/post-install/finished.sh" ]]; then
-    if ! grep -q "omarchy-setup-fish" install/post-install/finished.sh; then
-        sed -i '1i run_logged omarchy-setup-fish' install/post-install/finished.sh || \
-        die "failed to patch finished.sh"
-        echo " ✓ Injected fish setup into finish sequence"
-    fi
 fi
 
 echo " ✓ CachyOS patches applied"
